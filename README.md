@@ -34,7 +34,7 @@ All the issues are either false positives or can't be fixed without raising othe
 
 ### Files
 
-Ensure both `OzushExchangeOffice.sol` and `OsuzhToken.sol` are present in your project. If using Remix, import them from your local GitHub repository or paste them manually.
+Ensure both `OzushExchangeOffice.sol` and `OzushToken.sol` are present in your project. If using Remix, import them from your local GitHub repository or paste them manually.
 
 ### Remix Setup
 
