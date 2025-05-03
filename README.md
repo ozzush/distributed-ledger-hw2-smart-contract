@@ -28,8 +28,6 @@ All the issues are either false positives or can't be fixed without raising othe
 
 ### Prerequisites
 
-- MetaMask connected to a testnet (e.g., Sepolia or Goerli)
-- Testnet ETH in your wallet
 - https://remix.ethereum.org
 
 ### Files
