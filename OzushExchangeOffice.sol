@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.29;
 
 import "@openzeppelin/contracts/access/Ownable2Step.sol";
@@ -21,11 +22,11 @@ contract OzushExchangeOffice is Ownable2Step, Pausable {
     event Paused();
     event Unpaused();
 
-    constructor(address initialOwner, IERC20 _token, uint256 _buyRate, uint256 _sellRate) 
-        Ownable(initialOwner)
+    constructor(IERC20 _token, uint256 _buyRate, uint256 _sellRate) 
+        Ownable(msg.sender)
         payable 
     {
-        require(initialOwner != address(0), "Zero owner");
+        require(owner() != address(0), "Zero owner");
         require(address(_token) != address(0), "Zero token");
         require(_buyRate != 0, "Zero buyRate");
         require(_sellRate != 0, "Zero sellRate");
