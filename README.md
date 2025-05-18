@@ -41,7 +41,18 @@ Ensure both `OzushExchangeOffice.sol` and `OzushToken.sol` are present in your p
 3. Set Solidity compiler to version `0.8.29`
 4. Compile both contracts
 
-### Deploy Contracts
+### Test deployment on Sepolia
+
+#### Token
+
+https://sepolia.etherscan.io/token/0x9b4940f11cc8149c5a8bb3d92e3f064d65c82c77
+
+#### Exchange Office
+
+https://sepolia.etherscan.io/address/0xb9A3A195742112176032e2bd4c1cA82C1b2E7e3f
+
+
+### Deploy Contracts in VM on Remix
 
 #### 1. Deploy OzushToken
 
