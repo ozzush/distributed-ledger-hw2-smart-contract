@@ -1,26 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.29;
 
-import "remix_tests.sol"; 
+import "remix_tests.sol";
 import "../contracts/OzushToken.sol";
 import "../contracts/OzushExchangeOffice.sol";
-
-contract UserSimulator {
-    OzushToken public token;
-    OzushExchangeOffice public office;
-
-    constructor(OzushToken _token, OzushExchangeOffice _office) {
-        token = _token;
-        office = _office;
-        token.approve(address(office), type(uint256).max);
-    }
-
-    function sell(uint256 amount) external {
-        office.sellTokens(amount);
-    }
-
-    receive() external payable {}
-}
+import "./UserSimulator.sol";
 
 contract ExchangeBuySellTest {
     OzushToken token;
@@ -30,23 +14,28 @@ contract ExchangeBuySellTest {
     uint256 buyRate = 1000;
     uint256 sellRate = 2000;
 
+    // Make the test contract receive ETH
+    receive() external payable {}
+
     function beforeEach() public {
-        token = new OzushToken(1_000_000 ether);
+        // Deploy token; owner is this test contract
+        token = new OzushToken(1_000_000);
+
+        // Deploy exchange office
         office = new OzushExchangeOffice(
-            address(this),
             IERC20(address(token)),
             buyRate,
             sellRate
         );
 
-        token.mint(address(office), 500_000 ether);
+        // Fund exchange with tokens and ETH
+        token.mint(address(office), 500_000 * 1e18);
         payable(address(office)).transfer(10 ether);
 
+        // Deploy user simulator and fund it
         user = new UserSimulator(token, office);
-        token.mint(address(user), 2_000 ether);
+        token.mint(address(user), 2_000 * 1e18);
     }
-
-    receive() external payable {}
 
     function testBuyTokens() public {
         uint256 ethToSend = 1 ether;
@@ -56,17 +45,28 @@ contract ExchangeBuySellTest {
         office.buyTokens{value: ethToSend}();
         uint256 newBalance = token.balanceOf(address(this));
 
-        Assert.equal(newBalance - prevBalance, expectedTokens, "Token amount mismatch");
+        Assert.equal(
+            newBalance - prevBalance,
+            expectedTokens,
+            "Token amount mismatch after buy"
+        );
     }
 
     function testSellTokens() public {
-        uint256 tokenAmount = 2000 ether;
-        uint256 ethExpected = (tokenAmount * 1e18) / sellRate;
+        uint256 tokenAmount = 2_000 * 1e18;
+        uint256 expectedEth = (tokenAmount * 1e18) / sellRate;
 
-        uint256 preETH = address(user).balance;
+        uint256 preBalance = address(user).balance;
         user.sell(tokenAmount);
-        uint256 postETH = address(user).balance;
+        uint256 postBalance = address(user).balance;
 
-        Assert.ok(postETH > preETH, "User should receive ETH");
+        Assert.ok(
+            postBalance > preBalance,
+            "User should receive ETH from selling tokens"
+        );
+        Assert.ok(
+            postBalance - preBalance >= expectedEth,
+            "User ETH gain should match expected"
+        );
     }
 }
