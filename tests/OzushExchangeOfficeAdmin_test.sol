@@ -15,7 +15,6 @@ contract ExchangeAdminTest {
     function beforeEach() public {
         token = new OzushToken(1_000_000 ether);
         office = new OzushExchangeOffice(
-            address(this),
             IERC20(address(token)),
             buyRate,
             sellRate
